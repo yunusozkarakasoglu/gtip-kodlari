@@ -6,6 +6,34 @@
 
 ---
 
+## 📦 Dosya Dağılımı: GitHub ↔ Mega
+
+| Depo | İçerik |
+|---|---|
+| **GitHub** — `github.com/yunusozkarakasoglu/gtip-kodlari` | Kod, scriptler, React uygulaması, README, küçük veri (JSON <2MB) |
+| **Mega** — `/gtip-kodları/` (yunusozkarakasoglu@hotmail.com hesabı) | Büyük veri: `gtip_kodlari.db` (49MB), CSV/JSON çıktılar, resmi arşiv PDF'leri, ZIP'ler, yedekler |
+
+**Mega klasör yapısı:**
+```
+Mega/
+└── gtip-kodları/
+    ├── veri/            ← gtip_kodlari.db, urun_kodlari.csv/.json, ipgt_2026.json,
+    │   │                  igv_2026.json, kdv_oranlari.json, tariffnumber_en.json,
+    │   │                  tim_ham.json
+    │   └── yedekler/    ← versiyonlu tar.gz yedekler
+    └── arsiv/           ← resmi belgeler: İthalat Rejimi Kararları, İGV/KDV Kararları,
+                           tgtc_2026.zip, igv_2026.zip
+```
+
+**Neden bölünmüş?** GitHub 100MB dosya limiti uygular; 49MB DB + 130MB arşiv repo'yu şişirir.
+Büyük dosyaların TAMAMI scriptlerle yeniden üretilebilir:
+```bash
+bash guncelle_ve_kur.sh   # kaynakları indir → parse → DB kur (büyük dosyaları yeniden oluşturur)
+```
+Mega'daki dosyalar arşiv/kopya amaçlıdır; çalışmak için GitHub klonuna + `guncelle_ve_kur.sh` yeterlidir.
+
+---
+
 ## 📊 Veri Özeti
 
 | Metrik | Değer |
