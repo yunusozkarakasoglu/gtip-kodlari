@@ -1,0 +1,34 @@
+# ============================================================
+# Büyük/binary/üretilebilir dosyalar GitHub'a GİTMEZ — Mega'da
+# Ayrıntı: README.md → "📦 Dosya Dağılımı" bölümü
+# ============================================================
+
+# Veritabanı ve büyük veri (scriptlerle yeniden üretilebilir)
+gtip_kodlari.db
+urun_kodlari.csv
+urun_kodlari.json
+ipgt_2026.json
+igv_2026.json
+kdv_oranlari.json
+tariffnumber_en.json
+tim_ham.json
+
+# Resmi arşiv PDF'leri ve ZIP'ler (Mega'da)
+*.pdf
+tgtc_2026.zip
+igv_2026.zip
+tgtc_2026/
+igv_2026/
+
+# Yedekler
+yedekler/
+
+# Node / frontend
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+# Sistem
+.DS_Store
+guncelleme_log.txt

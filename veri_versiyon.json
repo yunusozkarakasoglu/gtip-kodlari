@@ -1,0 +1,50 @@
+{
+  "versiyon": "2026.2",
+  "yil": 2026,
+  "guncellenme": "2026-09-01 11:00",
+  "kaynaklar": {
+    "ipgt": {
+      "ad": "İstatistik Pozisyonlarına Bölünmüş Türk Gümrük Tarife Cetveli",
+      "kaynak": "ggm.ticaret.gov.tr (Ticaret Bakanlığı)",
+      "karar": "10781 (30.12.2025, RG 33123 Mükerrer)",
+      "dosya": "tgtc_2026.zip",
+      "guncel": true
+    },
+    "igv": {
+      "ad": "İlave Gümrük Vergisi listeleri (Ek-1/2/3)",
+      "kaynak": "ithalat.ticaret.gov.tr (İthalat Genel Müdürlüğü)",
+      "karar": "3351 + 10791 (31.12.2025, RG 33124 3.Mükerrer)",
+      "dosya": "igv_2026.zip",
+      "guncel": true
+    },
+    "en_aciklamalar": {
+      "ad": "İngilizce açıklama + anahtar kelimeler",
+      "kaynak": "tariffnumber.com (2026 CN)",
+      "guncel": true
+    },
+    "kdv": {
+      "ad": "KDV oranları (varsayılan %20, indirimli listeler GİB)",
+      "kaynak": "gib.gov.tr",
+      "guncel": true,
+      "not": "GİB resmi 'KDV Oranları' PDF'inden (I/II sayılı listeler) GTİP bazlı oranlar yüklendi"
+    },
+    "otv": {
+      "ad": "ÖTV listeleri",
+      "kaynak": "gib.gov.tr",
+      "guncel": false,
+      "not": "Tablo iskeleti hazır, listeler eklenmedi"
+    },
+    "antidamping": {
+      "ad": "Anti-damping önlemleri",
+      "kaynak": "ithalat.ticaret.gov.tr",
+      "guncel": false,
+      "not": "Kapsam dışı — TARA/gümrük müşaviri teyidi önerilir"
+    }
+  },
+  "istatistik": {
+    "urun_kodlari": 15718,
+    "igv": 4562,
+    "fasillar": 97,
+    "kdv": 5281
+  }
+}
