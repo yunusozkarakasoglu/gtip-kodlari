@@ -11,7 +11,7 @@
 | Depo | İçerik |
 |---|---|
 | **GitHub** — `github.com/yunusozkarakasoglu/gtip-kodlari` | Kod, scriptler, React uygulaması, README, küçük veri (JSON <2MB) |
-| **Mega** — `/gtip-kodları/` (yunusozkarakasoglu@hotmail.com hesabı) | Büyük veri: `gtip_kodlari.db` (49MB), CSV/JSON çıktılar, resmi arşiv PDF'leri, ZIP'ler, yedekler |
+| **Mega** — `/gtip-kodları/` (yunusozkarakasoglu@gmail.com hesabı) | Büyük veri: `gtip_kodlari.db` (49MB), CSV/JSON çıktılar, resmi arşiv PDF'leri, ZIP'ler, yedekler |
 
 **Mega klasör yapısı:**
 ```
