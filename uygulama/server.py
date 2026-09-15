@@ -3,7 +3,7 @@
 """server.py — GTİP / Vergi Sorgulama API'si (FastAPI, tamamen çevrimdışı).
 Çalıştırma:  cd uygulama && uvicorn server:app --port 8899
 """
-import os, sys, json, subprocess, shutil, time, glob
+import os, sys, json, subprocess, shutil, time, glob, tarfile
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -14,8 +14,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sorgula_modulu import (ara_urun, gtip_bilgi, ulke_listesi, ulke_grubu,
                             hesapla_ithalat, hesapla_ihracat, sorgula)
 
-KLASOR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSIYON_DOSYA = os.path.join(KLASOR, "veri_versiyon.json")
+KLASOR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # proje kökü
+VERI = os.path.join(KLASOR, "veri")
+VERSIYON_DOSYA = os.path.join(VERI, "veri_versiyon.json")
+DB = os.path.join(VERI, "gtip_kodlari.db")
+LOG_DOSYA = os.path.join(KLASOR, "guncelleme_log.txt")
 
 app = FastAPI(title="GTİP / Vergi Sorgulama", version="1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -29,7 +32,6 @@ if os.path.exists(os.path.join(DIST, "index.html")):
     def anasayfa():
         from fastapi.responses import HTMLResponse
         return HTMLResponse(open(os.path.join(DIST, "index.html"), encoding="utf-8").read())
-
 # ---------- Modeller ----------
 class SorguIstek(BaseModel):
     urun: str
@@ -51,15 +53,14 @@ def versiyon_oku():
 @app.get("/api/durum")
 def durum():
     v = versiyon_oku()
-    db = os.path.join(KLASOR, "gtip_kodlari.db")
     import sqlite3
-    con = sqlite3.connect(db)
+    con = sqlite3.connect(DB)
     n = con.execute("SELECT COUNT(*) FROM urun_kodlari").fetchone()[0]
     igv = con.execute("SELECT COUNT(*) FROM igv").fetchone()[0]
     con.close()
     return {
         "cevrimdisi": True,
-        "veri_yolu": KLASOR,
+        "veri_yolu": VERI,
         "urun_kodlari": n, "igv": igv,
         "versiyon": v,
     }
@@ -95,14 +96,14 @@ def is_akisi(istek: SorguIstek):
 @app.post("/api/guncelle")
 def guncelle():
     """Kaynakları yeniden indirip DB'yi yeniden kurar (arka planda script)."""
-    script = os.path.join(KLASOR, "guncelle_ve_kur.sh")
-    log = os.path.join(KLASOR, "guncelleme_log.txt")
+    script = os.path.join(KLASOR, "scripts", "guncelle_ve_kur.sh")
+    log = LOG_DOSYA
     subprocess.Popen(["bash", script], stdout=open(log, "w"), stderr=subprocess.STDOUT)
     return {"durum": "basladi", "log": log}
 
 @app.get("/api/guncelle/durum")
 def guncelle_durum():
-    log = os.path.join(KLASOR, "guncelleme_log.txt")
+    log = LOG_DOSYA
     son = ""
     if os.path.exists(log):
         son = open(log, encoding="utf-8", errors="ignore").read()[-1500:]
@@ -118,13 +119,13 @@ def yedekle():
     damga = time.strftime("%Y%m%d_%H%M%S")
     isim = f"veri_{v.get('versiyon', 'x')}_{damga}.tar.gz"
     hedef = os.path.join(yedek_klasor, isim)
-    # kritik dosyalar
-    dosyalar = ["gtip_kodlari.db", "urun_kodlari.csv", "urun_kodlari.json",
-                "ipgt_2026.json", "igv_2026.json", "veri_versiyon.json"]
-    mevcut = [d for d in dosyalar if os.path.exists(os.path.join(KLASOR, d))]
-    with tar_open(hedef, "w:gz") as t:
-        for d in mevcut:
-            t.add(os.path.join(KLASOR, d), arcname=d)
+    # kritik dosyalar (veri/ altında)
+    adlar = ["gtip_kodlari.db", "urun_kodlari.csv", "urun_kodlari.json",
+             "ipgt_2026.json", "igv_2026.json", "veri_versiyon.json"]
+    mevcut = [a for a in adlar if os.path.exists(os.path.join(VERI, a))]
+    with tarfile.open(hedef, "w:gz") as t:
+        for a in mevcut:
+            t.add(os.path.join(VERI, a), arcname=a)
     return {"yedek": hedef, "dosyalar": len(mevcut)}
 
 @app.get("/api/yedekler")
@@ -142,12 +143,14 @@ def geri_yukle(isim: str):
         return {"hata": f"Yedek bulunamadı: {isim}"}
     import tarfile
     with tarfile.open(yol, "r:gz") as t:
-        t.extractall(KLASOR)
+        t.extractall(VERI)      # yedek içeriği veri/ altına geri yüklenir
     return {"durum": "geri yuklendi", "yedek": isim}
 
-def tar_open(*a, **k):
-    import tarfile
-    return tarfile.open(*a, **k)
+# ---------- React build'inin kalan statikleri (favicon.svg vb.) ----------
+# DİKKAT: uçlardan SONRA tanımlanmalı — "/" mount'u kendisinden sonra eklenen uçları gölgeler.
+if os.path.exists(os.path.join(DIST, "index.html")):
+    app.mount("/", StaticFiles(directory=DIST, html=True), name="spa")
+
 
 if __name__ == "__main__":
     import uvicorn

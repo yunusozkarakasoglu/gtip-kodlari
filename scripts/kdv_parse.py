@@ -3,12 +3,25 @@
 """kdv_parse.py — GİB resmi KDV Oranları PDF'inden (I)/(II) sayılı listeleri parse eder.
 Her maddenin GTİP referanslarını (fasıl/pozisyon/12-hane) + hariçleri çıkarır,
 veritabanındaki her GTİP için KDV oranını belirler: %1 (I), %10 (II), %20 (genel).
-Çıktı: Masaüstü/gtip_kodlari/kdv_oranlari.json  (liste: [ {gtip_12, oran, kaynak} ])
+Çıktı: veri/kdv_oranlari.json  (liste: [ {gtip_12, oran, kaynak} ])
+Girdi:  kaynak/kdv_oranlari_gib.pdf (GİB) — pdftotext varsa otomatik metne çevrilir
 """
-import re, json, os, sqlite3
+import re, json, os, sqlite3, subprocess
 
-OUT = "/home/yunus/Masaüstü/gtip_kodlari"
+from yollar import VERI as OUT, DB, kaynak
+
+PDF = kaynak("kdv_oranlari_gib.pdf")
 PDF_TXT = "/tmp/kdv_gib.txt"
+
+
+def pdf_metni():
+    """GİB PDF'ini metne çevirir; /tmp/kdv_gib.txt varsa onu kullanır."""
+    if os.path.exists(PDF_TXT):
+        return PDF_TXT
+    if not os.path.exists(PDF):
+        raise SystemExit(f"❌ Kaynak PDF yok: {PDF}\n   → 'bash scripts/guncelle.sh' ile indirin.")
+    subprocess.run(["pdftotext", "-layout", PDF, PDF_TXT], check=True)
+    return PDF_TXT
 
 def madde_bol(metin):
     """Numaralı maddeleri (1-, 2-, ...) ayır. Ayrıca a), b), c) alt maddeleri içeride kalır."""
@@ -57,7 +70,7 @@ def kod_referanslari(metin):
     return {"ekle": ekle, "haric": haric, "haric_poz": haric_poz, "kismi": kismi}
 
 def main():
-    txt = open(PDF_TXT, encoding='utf-8', errors='ignore').read()
+    txt = open(pdf_metni(), encoding='utf-8', errors='ignore').read()
     i1 = txt.find('(I) SAYILI LİSTE')
     i2 = txt.find('(II) SAYILI LİSTE')
     i3 = txt.find('(II) SAYILI LİSTE', i2 + 1)
@@ -71,7 +84,7 @@ def main():
     # hariç tutulacak spesifik kodlar (ör. "hariç" geçen tanımlayıcı maddelerdeki istisnalar)
 
     # DB'deki tüm GTİP'ler
-    con = sqlite3.connect(f"{OUT}/gtip_kodlari.db")
+    con = sqlite3.connect(DB)
     gtipler = [r[0] for r in con.execute("SELECT gtip_12 FROM urun_kodlari")]
     con.close()
 

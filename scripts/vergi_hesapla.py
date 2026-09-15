@@ -5,7 +5,7 @@ Kullanım: python3 vergi_hesapla.py 840999000012 CN 10000
 """
 import sqlite3, sys, os
 
-DB = "/home/yunus/Masaüstü/gtip_kodlari/gtip_kodlari.db"
+from yollar import DB
 
 def ulke_grubu(cur, kod):
     r = cur.execute("SELECT igv_grup FROM ulke_gruplari WHERE ulke_kod=?", (kod.upper(),)).fetchone()

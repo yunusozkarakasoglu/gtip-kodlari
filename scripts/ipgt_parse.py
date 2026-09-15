@@ -7,8 +7,9 @@
 """
 import xlrd, re, json, glob, os
 
-KAYNAK = "/home/yunus/Masaüstü/gtip_kodlari/tgtc_2026/2026 TGTC/2026 TGTC"
-OUT = "/home/yunus/Masaüstü/gtip_kodlari"
+from yollar import VERI as OUT, kaynak
+
+KAYNAK = kaynak("tgtc_2026", "2026 TGTC", "2026 TGTC")
 
 def temizle(s):
     """Baştaki tireleri/boşlukları temizle, iç boşlukları sadeleştir."""

@@ -1,34 +1,32 @@
 # ============================================================
 # Büyük/binary/üretilebilir dosyalar GitHub'a GİTMEZ — Mega'da
-# Ayrıntı: README.md → "📦 Dosya Dağılımı" bölümü
+# Ayrıntı: README.md → "📦 Dosya Dağılımı" + "🗂️ Proje Yapısı"
+# Kural: veri/ ve kaynak/ içeriği scriptlerle yeniden üretilebilir.
 # ============================================================
 
-# Veritabanı ve büyük veri (scriptlerle yeniden üretilebilir)
-gtip_kodlari.db
-urun_kodlari.csv
-urun_kodlari.json
-ipgt_2026.json
-igv_2026.json
-kdv_oranlari.json
-tariffnumber_en.json
-tim_ham.json
+# --- Üretilen veri (veri/) ---
+veri/gtip_kodlari.db
+veri/gtip_kodlari.db-*        # WAL / SHM (journal_mode=WAL)
+veri/urun_kodlari.csv
+veri/urun_kodlari.json
+veri/ipgt_2026.json
+veri/igv_2026.json
+veri/kdv_oranlari.json
+veri/tariffnumber_en.json
+veri/tim_ham.json
 
-# Resmi arşiv PDF'leri ve ZIP'ler (Mega'da)
-*.pdf
-tgtc_2026.zip
-igv_2026.zip
-tgtc_2026/
-igv_2026/
+# --- Resmi arşiv (kaynak/ — guncelle.sh indirir) ---
+kaynak/
 
-# Yedekler
+# --- Yedekler ---
 yedekler/
 
-# Node / frontend
+# --- Node / frontend ---
 node_modules/
 dist/
 __pycache__/
 *.pyc
 
-# Sistem
+# --- Sistem / çalışma zamanı ---
 .DS_Store
 guncelleme_log.txt

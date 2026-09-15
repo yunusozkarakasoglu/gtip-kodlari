@@ -28,9 +28,27 @@ Mega/
 **Neden bölünmüş?** GitHub 100MB dosya limiti uygular; 49MB DB + 130MB arşiv repo'yu şişirir.
 Büyük dosyaların TAMAMI scriptlerle yeniden üretilebilir:
 ```bash
-bash guncelle_ve_kur.sh   # kaynakları indir → parse → DB kur (büyük dosyaları yeniden oluşturur)
+bash scripts/guncelle_ve_kur.sh   # kaynakları indir → parse → DB kur (büyük dosyaları yeniden oluşturur)
 ```
-Mega'daki dosyalar arşiv/kopya amaçlıdır; çalışmak için GitHub klonuna + `guncelle_ve_kur.sh` yeterlidir.
+Mega'daki dosyalar arşiv/kopya amaçlıdır; çalışmak için GitHub klonuna + `scripts/guncelle_ve_kur.sh` yeterlidir.
+
+---
+
+## ⚙️ Kurulum / Bağımlılıklar
+
+```bash
+# Sistem araçları: python3 (3.12), node (22), curl, unzip, tar, poppler-utils (pdftotext)
+sudo apt install poppler-utils unzip curl
+
+# Python
+pip install fastapi uvicorn pydantic xlrd openpyxl
+
+# Arayüz (tek seferlik)
+cd uygulama/frontend && npm install
+
+# Çalıştırma (arayüz + API, tek port)
+cd uygulama && ./baslat.sh            # → http://127.0.0.1:8899
+```
 
 ---
 
@@ -42,54 +60,83 @@ Mega'daki dosyalar arşiv/kopya amaçlıdır; çalışmak için GitHub klonuna +
 | Fasıl sayısı | 97 (77 ve 98 hariç) |
 | Türkçe açıklama kapsamı | %100 |
 | İngilizce açıklama kapsamı | %99,9 (15.704 / 15.718) |
-| Vergi haddi kapsamı | %91 (14.375 kod) |
+| Vergi haddi kapsamı | %91 (14.375 kod) — bkz. ⚠️ aşağıdaki uyarı |
 | **İGV (İlave Gümrük Vergisi) kayıtları** | **4.562** (EK-1: 4.544, EK-2: 14, EK-3: 4) |
-| **KDV oranı kayıtları (GİB)** | **5.281** (%1: 2.214, %10: 3.067 — gerisi %20) |
+| **KDV oranı (GİB listelerinden)** | **5.281** (%1: 2.214, %10: 3.067 — gerisi %20) — tabloda 15.718 GTİP'in tamamı için oran vardır |
 | Ülke grubu eşlemesi | 110 ülke + varsayılan D.Ü. |
 | Yıl | **2026** (1 Ocak 2026'da yürürlüğe girmiştir) |
 
+> ### ⚠️ `vergi_haddi` sütunu neyi gösterir?
+>
+> İPGT Excel'lerindeki bu sütunun başlığı **"474 VERGİ HADDİ"**'dir ve kaynak dosyanın
+> kendi açıklaması (`kaynak/tgtc_2026/2026 TGTC/açıklamalar.xls`) şöyle der:
+> *"Bu sütunda, 14.05.1964 tarih ve 474 sayılı Kanun ile tesbit edilen vergi hadleri
+> gösterilmiştir."*
+>
+> Yani bu değer **474 sayılı Kanun'un kanuni haddidir; fiilen uygulanan ithalat vergisi
+> oranı değildir.** Uygulanan oranlar her yıl **İthalat Rejimi Kararı** ekleriyle
+> belirlenir (ör. Karar 10781). Veri setindeki dağılım bunu doğrular: %50 (2.540 kayıt),
+> %25 (1.660), %100 (1.567) ... — otomobil (87.03) ve cep telefonu (8517.12) gibi
+> kalemlerde bu sütun **boştur**.
+>
+> **Pratik sonuç:** Araç, ürünün kanuni haddini gösterir; gümrük beyanındaki gerçek vergi
+> için İthalat Rejimi Kararı / TARA teyidi şarttır. (Kaynak PDF'ler taranmış görüntüdür,
+> metin katmanı yoktur → uygulanan oranların otomatik çıkarımı OCR gerektirir.)
+
 ---
 
-## 🗂️ Dosyalar
+## 🗂️ Proje Yapısı
 
 ```
 gtip_kodlari/
 │
-├── gtip_kodlari.db          ← ANA VERİTABANI (SQLite) — muhasebe programı bu dosyayı kullanır
-├── urun_kodlari.csv         ← Excel'de açılabilir düz tablo (14 sütun × 15.718 satır)
-├── urun_kodlari.json        ← API/entegrasyon formatı (JSON)
-├── vergi_hesapla.py         ← VERGİ HESAPLAMA ARACI (GTİP + menşe + CIF → tam döküm)
-├── guncelle.sh              ← YILLIK GÜNCELLEME SCRIPTİ (resmi kaynaklardan yeniden indirir)
-├── ipgt_parse.py            ← İPGT Excel → JSON dönüştürücü
-├── igv_parse.py             ← İGV Excel → JSON dönüştürücü
-├── gtip_build_db3.py        ← JSON → SQLite ana tablo kurucusu
-├── gtip_build_vergi.py      ← İGV + ülke grupları + KDV + ÖTV tabloları kurucusu
+├── AGENTS.md  Roadmaps.md  Project_info.md  Tasks.md  Mimari.md  index.md
+├── README.md                 ← bu dosya (Readme.md aynı dosyaya bağdır)
 │
-├── ipgt_2026.json           ← Ham İPGT 2026 verisi (Ticaret Bakanlığı, Türkçe tanımlar)
-├── tariffnumber_en.json     ← Ham EN açıklama + anahtar kelime verisi (tariffnumber.com)
-├── igv_2026.json            ← Ham İGV verisi (Ek-1/2/3, menşe bazlı oranlar)
-├── tim_ham.json             ← TİM GTİP verisi (ARŞİV — 2024'e dayanır, veritabanında kullanılmaz)
-├── eksik_cn8.json           ← EN karşılığı bulunamayan kod listesi (araştırma notu)
+├── scripts/                  ← TÜM kod (veri üretimi + güncelleme)
+│   ├── yollar.py             ← klasör yolları (tek kaynak: veri/, kaynak/, yedekler/)
+│   ├── ipgt_parse.py         ← İPGT Excel → JSON dönüştürücü
+│   ├── igv_parse.py          ← İGV Excel → JSON dönüştürücü
+│   ├── kdv_parse.py          ← GİB KDV oranları PDF → JSON (pdftotext ile)
+│   ├── gtip_build_db3.py     ← JSON → SQLite ana tablo + FTS5 kurucusu (DB'yi yeniden kurar)
+│   ├── gtip_build_vergi.py   ← İGV + ülke grupları + KDV + ÖTV tabloları kurucusu
+│   ├── vergi_hesapla.py      ← VERGİ HESAPLAMA ARACI (GTİP + menşe + CIF → tam döküm)
+│   ├── guncelle.sh           ← resmi kaynakları indirir (parse/DB kurmaz)
+│   └── guncelle_ve_kur.sh    ← yedek + indir + parse + DB kur + versiyon (tam akış)
 │
-├── igv_2026.zip + igv_2026/  ← Resmi İGV listeleri (Ek-1.xlsx, Ek-2 Ek-3.xlsx)
-├── ithalat_rejimi_10781.pdf  ← İthalat Rejimi Kararı 10781 (Resmî Gazete, 631 s.)
-├── ithalat_rejimi_3350.pdf   ← İthalat Rejimi Kararı 3350 (Resmî Gazete, 568 s.)
-├── igv_karar_10791.pdf       ← İGV Kararı 10791 (Resmî Gazete, 103 s.)
-├── tgtc_2026.zip            ← Resmi İPGT 2026 arşiv dosyası (Ticaret Bakanlığı indirmesi)
-└── tgtc_2026/               ← Açılmış resmi Excel dosyaları (kaynak belge)
-    └── 2026 TGTC/
-        ├── 2026 TGTC/           ← 98 adet fasıl Excel'i (01–97, 99)
-        ├── 2026 FASIL NOTLARI/  ← 96 adet fasıl yorum notu
-        ├── açıklamalar.xls      ← Genel açıklamalar
-        ├── içindekiler.xls      ← İçindekiler / fasıl başlıkları
-        ├── Kısaltmalar.xls      ← Kısaltmalar
-        ├── ölçü birimleri.xls   ← Ölçü birimi referansı
-        └── yorum kuralları.xls  ← Yorum kuralları
+├── veri/                     ← ÜRETİLEN VERİ (git'e girmez)
+│   ├── gtip_kodlari.db       ← ANA VERİTABANI (SQLite) — muhasebe programı bunu kullanır
+│   ├── urun_kodlari.csv      ← Excel'de açılabilir düz tablo (14 sütun × 15.718 satır)
+│   ├── urun_kodlari.json     ← API/entegrasyon formatı (JSON)
+│   ├── ipgt_2026.json        ← Ham İPGT 2026 verisi (Ticaret Bakanlığı, Türkçe tanımlar)
+│   ├── tariffnumber_en.json  ← EN açıklama + anahtar kelimeler (tariffnumber.com)
+│   ├── igv_2026.json         ← Ham İGV verisi (EK-1/2/3, menşe bazlı oranlar)
+│   ├── kdv_oranlari.json     ← GTİP bazlı KDV oranları (GİB I/II sayılı listeler)
+│   ├── tim_ham.json          ← TİM fasıl adları (ARŞİV — 2024 kaynaklı)
+│   ├── eksik_cn8.json        ← EN karşılığı bulunamayan CN8 kodları (araştırma notu)
+│   └── veri_versiyon.json    ← sürüm + kaynak karar numaraları + güncellik
+│
+├── kaynak/                   ← RESMİ ARŞİV (git'e girmez, guncelle.sh indirir)
+│   ├── tgtc_2026.zip + tgtc_2026/    ← İPGT 2026 Excel'leri (98 fasıl + notlar + kılavuzlar)
+│   ├── igv_2026.zip + igv_2026/      ← İGV listeleri (Ek-1.xlsx, Ek-2 Ek-3.xlsx)
+│   ├── ithalat_rejimi_10781.pdf      ← İthalat Rejimi Kararı 10781 (Resmî Gazete, 631 s.)
+│   ├── ithalat_rejimi_3350.pdf       ← İthalat Rejimi Kararı 3350 (Resmî Gazete, 568 s.)
+│   ├── igv_karar_10791.pdf           ← İGV Kararı 10791 (Resmî Gazete, 103 s.)
+│   ├── kdv_karar_7346.pdf            ← KDV Kararı 7346
+│   └── kdv_oranlari_gib.pdf          ← GİB resmi "KDV Oranları" PDF'i
+│
+├── uygulama/                 ← ARAYÜZ + API (React + FastAPI)
+│   ├── server.py             ← FastAPI uçları + React statik sunumu
+│   ├── sorgula_modulu.py     ← sorgulama çekirdeği (arama + vergi hesabı)
+│   ├── baslat.sh             ← tek komutla başlatma (build + uvicorn, port 8899)
+│   └── frontend/             ← React (Vite) kaynakları + dist/ (git'e girmez)
+│
+└── yedekler/                 ← versiyonlu tar.gz anlık görüntüler (git'e girmez)
 ```
 
 ---
 
-## 🗃️ Veritabanı Şeması (`gtip_kodlari.db`)
+## 🗃️ Veritabanı Şeması (`veri/gtip_kodlari.db`)
 
 ### Tablo: `urun_kodlari` — her satır = 1 resmi 12 haneli GTİP
 
@@ -108,7 +155,7 @@ gtip_kodlari/
 | `aciklama_en_6` | — | İngilizce açıklama (6 hane) |
 | `anahtar_en` | `Roasted Coffee · Coffee Beans...` | İngilizce anahtar kelimeler (arama desteği) |
 | `birim` | `Baş` | Ölçü birimi |
-| `vergi_haddi` | `100` | Gümrük vergisi haddi (%) |
+| `vergi_haddi` | `100` | **474 sayılı Kanun (1964) ile tespit edilen vergi haddi (%)** — fiilen uygulanan oran değildir, aşağıdaki uyarıya bakın |
 | `aranacak_tr` | `kahve kavrulmus kafeini alinmamis...` | Normalize TR arama metni (TİŞÖRTLER→tisortler) |
 | `aranacak_en` | `roasted coffee decaffeinated...` | Normalize EN arama metni |
 
@@ -135,9 +182,9 @@ Karar 3351 + 10791 — menşe ülke grubuna göre farklı oranlar:
 
 **Kritik kural (Karar 3351 md. 2/2):** A.TR'li ithalatta AB/Türk menşeli olmayan eşya → D.Ü. oranı uygulanır.
 
-### `ulke_gruplari` — ülke → İGV grubu eşlemesi (59 ülke + D.Ü. varsayılan)
+### `ulke_gruplari` — ülke → İGV grubu eşlemesi (110 ülke + D.Ü. varsayılan)
 
-### `kdv` — KDV oranları (5.281 kayıt, GİB resmi)
+### `kdv` — KDV oranları (15.718 kayıt — her GTİP için oran, GİB resmi)
 GİB'in resmi **"KDV Oranları"** PDF'inden (konsolide Karar 2007/13033 + değişiklikler) GTİP bazlı oranlar:
 - **%1** — I sayılı liste (temel gıda: et, süt, sebze, meyve, un, ekmek, kitap...)
 - **%10** — II sayılı liste (tekstil, giyim, deri, ayakkabı, halı, kağıt/kitap...)
@@ -172,7 +219,7 @@ cd gtip_kodlari/uygulama && ./baslat.sh
 ## 💰 Vergi Hesaplama (komut satırı)
 
 ```bash
-python3 vergi_hesapla.py <gtip_12> <menşe_ISO> <CIF_EUR>
+python3 scripts/vergi_hesapla.py <gtip_12> <menşe_ISO> <CIF_EUR>
 ```
 
 **Örnek — gemi motoru parçası (piston), Çin menşeli, CIF 10.000 €:**
@@ -187,6 +234,8 @@ TOPLAM VERGİ: 7.640 € | TOPLAM MALİYET: 17.640 €
 **Aynı parça Almanya menşeli:** GV %0 + İGV %0 + KDV 2.000 € = **2.000 €** (Gümrük Birliği avantajı)
 
 > ⚠️ Hesaplama **gümrük vergisi + İGV + KDV**'yi içerir. ÖTV, ilave mali yükümlülük, anti-damping ve korunma önlemleri kapsam dışıdır — bu kalemler için gümrük müşaviri / TARA (`uygulama.gtb.gov.tr/TARA`) teyidi gereklidir.
+>
+> ⚠️ **Gümrük vergisi kalemi, İPGT'deki "474 sayılı Kanun vergi haddi" sütunundan gelir** — fiilen uygulanan oran değildir (yukarıdaki uyarıya bakın). Uygulanan oranlar İthalat Rejimi Kararı eklerindedir.
 
 ---
 
@@ -256,15 +305,15 @@ SELECT fas_2, COUNT(*) FROM urun_kodlari GROUP BY fas_2 ORDER BY 2 DESC LIMIT 5;
 
 | İşlem | Komut / Buton | Ne yapar |
 |---|---|---|
-| **Güncelle** | `bash guncelle_ve_kur.sh` veya uygulamada 🔄 | 1) Yedek al → 2) İPGT+İGV indir → 3) Parse → 4) DB kur → 5) Versiyon artır (2026.1→2026.2) |
+| **Güncelle** | `bash scripts/guncelle_ve_kur.sh` veya uygulamada 🔄 | 1) Yedek al → 2) İPGT+İGV+KDV indir → 3) Parse → 4) DB kur → 5) Vergi tabloları + KDV → 6) Versiyon artır (2026.1→2026.2) |
 | **Yedek al** | uygulamada 💾 | `yedekler/veri_{versiyon}_{tarih}.tar.gz` oluşturur (DB+JSON+versiyon) |
 | **Geri yükle** | uygulamada yedek satırına tıkla | Seçilen yedeği geri yükler |
-| **Versiyon takibi** | `veri_versiyon.json` | Kaynak adları + karar numaraları + güncellik durumu |
+| **Versiyon takibi** | `veri/veri_versiyon.json` | Kaynak adları + karar numaraları + güncellik durumu |
 
 **Manuel adımlar (yıllık):**
 1. **Resmi İPGT indir:** Gümrükler Genel Müdürlüğü → `ggm.ticaret.gov.tr/duyurular` → "İstatistik Pozisyonlarına Bölünmüş Türk Gümrük Tarife Cetveli" duyurusu → `20XX TGTC.zip`
 2. **İGV listeleri:** `ithalat.ticaret.gov.tr/duyurular` → İGV Kararı duyurusu → `igv 20XX.zip` (yıl ortası güncellemelerine dikkat!)
 3. **EN açıklamalar:** `tariffnumber.com` fasıl ve heading sayfalarından EN açıklama + anahtar kelimeler
-4. **İş akışı:** `ipgt_parse.py` → `igv_parse.py` → `gtip_build_db3.py` → `gtip_build_vergi.py` → CSV/JSON dışa aktar
-5. **KDV/ÖTV:** GİB'den indirimli oran listeleri → `kdv`/`otv` tablolarına ekle
+4. **İş akışı:** `scripts/ipgt_parse.py` → `scripts/igv_parse.py` → `scripts/gtip_build_db3.py` → `scripts/kdv_parse.py` → `scripts/gtip_build_vergi.py` → CSV/JSON dışa aktarılır
+5. **KDV/ÖTV:** GİB'den indirimli oran listeleri (`kaynak/kdv_oranlari_gib.pdf`) → `scripts/kdv_parse.py` → `kdv` tablosu; ÖTV listeleri henüz eklenmedi (`otv` boş)
 6. **Anti-damping:** TB İthalat GM önlem listesi → ayrı tablo (henüz eklenmedi)

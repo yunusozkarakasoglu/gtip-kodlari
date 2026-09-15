@@ -8,7 +8,8 @@
 """
 import sqlite3, os, json, unicodedata, re
 
-DB = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "gtip_kodlari.db")
+KOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB = os.path.join(KOK, "veri", "gtip_kodlari.db")
 
 def _baglan():
     con = sqlite3.connect(DB)

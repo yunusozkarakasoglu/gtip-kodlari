@@ -5,8 +5,7 @@ Ana DB'ye tablolar ekler: igv, ulke_gruplari, kdv, otv
 """
 import json, sqlite3, os
 
-OUT = "/home/yunus/Masaüstü/gtip_kodlari"
-DB = f"{OUT}/gtip_kodlari.db"
+from yollar import VERI as OUT, DB
 
 # ============ ÜLKE GRUPLARI (İGV kolon eşlemesi) ============
 # AB grubu: EU27 + EFTA4 + BK + Bosna + Faroe + G.Kore + Malezya + STA ortakları
@@ -87,7 +86,7 @@ def main():
     CREATE INDEX IF NOT EXISTS idx_igv_gtip ON igv(gtip_12);
     """)
 
-    igv = json.load(open(f"{OUT}/igv_2026.json", encoding="utf-8"))
+    igv = json.load(open(os.path.join(OUT, "igv_2026.json"), encoding="utf-8"))
     satirlar = []
     for x in igv:
         satirlar.append((x["gtip"], x["liste"], x.get("dipnot",""),
@@ -125,7 +124,18 @@ def main():
         oran      REAL,
         kaynak    TEXT
     )""")
-    print("✅ kdv tablosu hazır (genel %20 — indirimli GTİP listeleri GİB'den eklenebilir)")
+    # kdv_parse.py'nin ürettiği JSON'u tabloya yükle (yoksa genel %20 geçerli)
+    kdv_dosya = os.path.join(OUT, "kdv_oranlari.json")
+    if os.path.exists(kdv_dosya):
+        kdv = json.load(open(kdv_dosya, encoding="utf-8"))
+        cur.execute("BEGIN")
+        cur.executemany(
+            "INSERT OR REPLACE INTO kdv VALUES (?,?,?)",
+            [(x["gtip_12"], x["oran"], x.get("kaynak")) for x in kdv])
+        con.execute("COMMIT")
+        print(f"✅ kdv: {len(kdv)} kayıt (GİB I/II sayılı listeler)")
+    else:
+        print("⚠ kdv_oranlari.json yok → kdv tablosu boş, tüm GTİP'ler için genel %20 geçerli")
 
     # ---- 4) ÖTV ----
     cur.execute("""CREATE TABLE IF NOT EXISTS otv (

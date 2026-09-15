@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 """İGV (İlave Gümrük Vergisi) listelerini parse et — Ek-1, Ek-2, Ek-3.
 Kaynak: ithalat.ticaret.gov.tr igv_2026.zip (resmi)
-Çıktı: Masaüstü/gtip_kodlari/igv_2026.json
+Çıktı: veri/igv_2026.json
 """
 import openpyxl, re, json, os
 
-OUT = "/home/yunus/Masaüstü/gtip_kodlari"
-KAYNAK = f"{OUT}/igv_2026"
+from yollar import VERI as OUT, kaynak
+
+KAYNAK = kaynak("igv_2026")
 
 def sayi(v):
     if v in (None, ""):

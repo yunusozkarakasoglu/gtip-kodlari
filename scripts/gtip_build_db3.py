@@ -8,8 +8,7 @@ Kaynaklar:
 """
 import json, sqlite3, os, csv, unicodedata
 
-OUT = "/home/yunus/Masaüstü/gtip_kodlari"
-DB = f"{OUT}/gtip_kodlari.db"
+from yollar import VERI as OUT, DB
 
 def normalize(s):
     if not s:

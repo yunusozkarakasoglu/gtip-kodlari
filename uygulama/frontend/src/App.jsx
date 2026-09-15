@@ -189,7 +189,7 @@ export default function App() {
           <div className="rapor">
             <div className="rapor-baslik">
               <h2>{rapor.gtip_12 || rapor.gtip}</h2>
-              <span className="hareket-rozet">{hareket.toUpperCase()}</span>
+              <span className="hareket-rozet">{hareket.toLocaleUpperCase('tr-TR')}</span>
             </div>
             <p className="urun-tanim">
               <strong>TR:</strong> {rapor.urun?.aciklama_tr_4} — {rapor.urun?.aciklama_tr}<br />
