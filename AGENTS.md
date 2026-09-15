@@ -41,7 +41,7 @@ Excel'lerinden SQLite veritabanı üretir, FastAPI + React arayüzüyle çevrimd
 ## Hafıza dosyaları (bu klasörde)
 
 `AGENTS.md` · `Roadmaps.md` · `Project_info.md` · `Tasks.md` · `Mimari.md` · `index.md` ·
-`README.md` (Readme.md → README.md sembolik bağdır, ikisi tek dosyadır).
+`README.md` (dış okuyucuya proje tanıtımı — ayrı bir `Readme.md` yoktur).
 
 Görev sonunda: kullanıcı **"tamam"** dedikten sonra `Tasks.md → Roadmaps.md → index.md →
 diğerleri` sırasıyla güncelle, sonra commit + push.

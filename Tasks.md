@@ -48,7 +48,7 @@
 - [x] **[2026-09-15 08:43] Temizlik > Kullanılmayan şablon dosyaları silindi**
   (hero.png, react.svg, vite.svg, icons.svg, frontend/README.md)
 - [x] **[2026-09-15 08:44] Hafıza > 7 dosya oluşturuldu** — AGENTS, Roadmaps, Project_info,
-  Tasks, Mimari, index, README (+ Readme.md sembolik bağı)
+  Tasks, Mimari, index, README
 - [x] **[2026-09-15 08:45] Test > Uçtan uca doğrulama** — parse → DB → KDV → API (durum/ara/
   ulkeler/sorgula) → React bundle (HTTP 200) → yedekle → geri yükle → CLI araçları
 - [x] **[2026-09-15 08:52] Çalıştırma > 8899 portu serbest bırakıldı** — 13 Eyl'den kalan

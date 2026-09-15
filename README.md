@@ -91,7 +91,7 @@ cd uygulama && ./baslat.sh            # → http://127.0.0.1:8899
 gtip_kodlari/
 │
 ├── AGENTS.md  Roadmaps.md  Project_info.md  Tasks.md  Mimari.md  index.md
-├── README.md                 ← bu dosya (Readme.md aynı dosyaya bağdır)
+├── README.md                 ← bu dosya (tek Readme; ayrıca Readme.md yok)
 │
 ├── scripts/                  ← TÜM kod (veri üretimi + güncelleme)
 │   ├── yollar.py             ← klasör yolları (tek kaynak: veri/, kaynak/, yedekler/)
