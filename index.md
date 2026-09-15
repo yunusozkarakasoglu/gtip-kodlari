@@ -100,9 +100,9 @@ PY
 ## Son commit'ler
 
 ```
+83fcc10 gtip-kodlari: klasör düzeni, hafıza dosyaları, KDV boru hattı düzeltmesi ve tarayıcı testi
 47f46d1 readme: Mega hesap adresi düzeltildi (gmail)
 3e447d0 readme: GitHub-Mega dosya dağılımı belgelendi (büyük veri Mega'da)
 b08231f uygulama: frontend bağımlılık kilidi eklendi
 f3ceff9 gtip-kodlari: Türkiye ithalat/ihracat GTİP + vergi hesaplama sistemi
 ```
-(Görev sonu commit'i bu listeye eklenecek.)

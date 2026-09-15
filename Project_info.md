@@ -21,7 +21,7 @@ programı entegrasyonu (CSV/JSON/SQLite çıktıları).
 | Arayüz | 4 adımlı iş akışı ekranı | `uygulama/frontend/src/App.jsx` |
 | Güncelleme | İndir → parse → DB → versiyon | `scripts/guncelle.sh`, `guncelle_ve_kur.sh` |
 
-## Veri hacmi (v2026.2)
+## Veri hacmi (v2026.3)
 
 | Öğe | Değer |
 |---|---|

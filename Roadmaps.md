@@ -1,7 +1,7 @@
 # Roadmaps.md — Global İlerleme (gtip_kodlari)
 
 > Sprint + alt görev takibi. İşaretleme görev sonunda, kullanıcı onayından sonra yapılır.
-> Güncel durum: **v2026.2** (İPGT 2026 + İGV Karar 3351/10791 + KDV GİB listeleri)
+> Güncel durum: **v2026.3** (İPGT 2026 + İGV Karar 3351/10791 + KDV GİB listeleri)
 
 ## Sprint 0 — Temel veri altyapısı ✅ (2026-09-01)
 

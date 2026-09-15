@@ -305,7 +305,7 @@ SELECT fas_2, COUNT(*) FROM urun_kodlari GROUP BY fas_2 ORDER BY 2 DESC LIMIT 5;
 
 | İşlem | Komut / Buton | Ne yapar |
 |---|---|---|
-| **Güncelle** | `bash scripts/guncelle_ve_kur.sh` veya uygulamada 🔄 | 1) Yedek al → 2) İPGT+İGV+KDV indir → 3) Parse → 4) DB kur → 5) Vergi tabloları + KDV → 6) Versiyon artır (2026.1→2026.2) |
+| **Güncelle** | `bash scripts/guncelle_ve_kur.sh` veya uygulamada 🔄 | 1) Yedek al → 2) İPGT+İGV+KDV indir → 3) Parse → 4) DB kur → 5) Vergi tabloları + KDV → 6) Versiyon artır (2026.2→2026.3) |
 | **Yedek al** | uygulamada 💾 | `yedekler/veri_{versiyon}_{tarih}.tar.gz` oluşturur (DB+JSON+versiyon) |
 | **Geri yükle** | uygulamada yedek satırına tıkla | Seçilen yedeği geri yükler |
 | **Versiyon takibi** | `veri/veri_versiyon.json` | Kaynak adları + karar numaraları + güncellik durumu |
