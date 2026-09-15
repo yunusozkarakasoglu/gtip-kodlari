@@ -99,10 +99,12 @@ PY
 
 ## Son commit'ler
 
+> Tam liste: `git log --oneline -10`
+
 ```
+1c1708d readme: Readme.md sembolik bağı kaldırıldı, tek README.md kaldı
+1f86e67 hafıza: sürüm 2026.3 ve son commit listesi güncellendi
 83fcc10 gtip-kodlari: klasör düzeni, hafıza dosyaları, KDV boru hattı düzeltmesi ve tarayıcı testi
 47f46d1 readme: Mega hesap adresi düzeltildi (gmail)
-3e447d0 readme: GitHub-Mega dosya dağılımı belgelendi (büyük veri Mega'da)
-b08231f uygulama: frontend bağımlılık kilidi eklendi
 f3ceff9 gtip-kodlari: Türkiye ithalat/ihracat GTİP + vergi hesaplama sistemi
 ```
